@@ -12,6 +12,7 @@
     <body>
         <div>
             <h1>Usuarios</h1>
+            <a href="Controlador?accion=crear">Crear nuevo usuario</a>
 
             <table border="1">
                 <thead>
@@ -20,33 +21,30 @@
                         <th>Nombre</th>
                         <th>Edad</th>
                         <th>Celular</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
-
-                <%
-                    UsuariosDAO dao = new UsuariosDAO();
-                    List<Usuarios> list = dao.listar();
-                    out.println("Cantidad de usuarios: " + list.size());
-                    Iterator<Usuarios> iter = list.iterator();
-                    Usuarios us = null;
-
-                    while (iter.hasNext()) {
-                        us = iter.next();
-                %>
-
-
                 <tbody>
+                    <%
+                        UsuariosDAO dao = new UsuariosDAO();
+                        List<Usuarios> list = dao.listar();
+                        Iterator<Usuarios> iter = list.iterator();
+                        Usuarios us = null;
+
+                        while (iter.hasNext()) {
+                            us = iter.next();
+                    %>
                     <tr>
                         <td><%= us.getId()%></td>
                         <td><%= us.getNombre()%></td>
                         <td><%= us.getEdad()%></td>
                         <td><%= us.getCelular()%></td>
-
-                <a>Editar</a>
-                <a>Quitar</a>
-                </td>
-                </tr>
-                <% }%>
+                        <td>
+                            <a href="Controlador?accion=editar&id=<%= us.getId()%>">️Editar</a> | 
+                            <a href="Controlador?accion=eliminar&id=<%= us.getId()%>" style="color: red;">Quitar</a>
+                        </td>
+                    </tr>
+                    <% }%>
                 </tbody>
             </table>
         </div>

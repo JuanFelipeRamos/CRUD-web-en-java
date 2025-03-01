@@ -6,6 +6,24 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <div>
+            <h1>Crear usuario</h1>
+            <form action="Controlador" method="POST">
+                <input type="hidden" name="accion" value="Crear">  <!-- 🔹 Se añade esto -->
+
+                Nombre: <br>
+                <input type="text" name="inputName" required><br>
+
+                Edad: <br>
+                <input type="number" name="inputEdad" required><br>
+
+                Celular: <br>
+                <input type="text" name="inputCel" required><br>
+
+                <input type="submit" value="Crear"><br>
+
+                <a href="Controlador?accion=listar">Regresar</a>
+            </form>
+        </div>
     </body>
 </html>

@@ -8,6 +8,7 @@ import java.util.List;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class UsuariosDAO implements CRUD {
 
@@ -37,15 +38,14 @@ public class UsuariosDAO implements CRUD {
                 us.setId(rs.getInt("id"));
                 us.setNombre(rs.getString("nombre"));
                 us.setEdad(rs.getInt("edad"));
-                us.setCelular(rs.getString("celular")); // Cambié a getString porque en la BD es varchar
+                us.setCelular(rs.getString("celular"));
                 list.add(us);
             }
 
         } catch (Exception e) {
-            e.printStackTrace(); // Esto imprimirá cualquier error en la consola
+            e.printStackTrace();
         }
 
-        // Verificamos si la lista tiene datos
         System.out.println("Usuarios recuperados:");
         for (Usuarios u : list) {
             System.out.println("ID: " + u.getId() + ", Nombre: " + u.getNombre() + ", Edad: " + u.getEdad() + ", Celular: " + u.getCelular());
@@ -61,7 +61,38 @@ public class UsuariosDAO implements CRUD {
 
     @Override
     public boolean crear(Usuarios user) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String sql = "INSERT INTO usuarios(nombre, edad, celular) VALUES(?, ?, ?)";
+        try {
+            con = cn.getConnection();
+
+            if (con == null) {
+                System.out.println("Error: No se pudo establecer conexión con la base de datos.");
+                return false;
+            }
+
+            ps = con.prepareStatement(sql);
+            ps.setString(1, user.getNombre());
+            ps.setInt(2, user.getEdad());
+            ps.setString(3, user.getCelular());
+
+            int filasAfectadas = ps.executeUpdate();
+
+            return filasAfectadas > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al intentar crear un nuevo usuario (UsuariosDAO): " + e);
+            return false;
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    con.close();  // 🔹 Aquí cerramos la conexión
+                }
+            } catch (SQLException e) {
+                System.out.println("Error cerrando la conexión: " + e.getMessage());
+            }
+        }
     }
 
     @Override
