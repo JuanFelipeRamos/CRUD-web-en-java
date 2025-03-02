@@ -1,9 +1,9 @@
+// Controlador.java - Actualización para editar y eliminar usuarios
 package Controlador;
 
 import Modelo.Usuarios;
 import ModeloDAO.UsuariosDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,22 +19,6 @@ public class Controlador extends HttpServlet {
     Usuarios usuarios = new Usuarios();
     UsuariosDAO usuariosDAO = new UsuariosDAO();
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Controlador</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Controlador at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -42,11 +26,23 @@ public class Controlador extends HttpServlet {
         String action = request.getParameter("accion");
 
         if (action.equalsIgnoreCase("listar")) {
-            UsuariosDAO dao = new UsuariosDAO();
-            request.setAttribute("usuarios", dao.listar());
+
+            System.out.println("Ejecutando listar en Controlador...");
+            System.out.println("Cantidad de usuarios encontrados: " + usuariosDAO.listar().size());
+
+            request.setAttribute("usuarios", usuariosDAO.listar());
             acceso = listar;
         } else if (action.equalsIgnoreCase("crear")) {
             acceso = crear;
+        } else if (action.equalsIgnoreCase("editar")) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            request.setAttribute("usuario", usuariosDAO.list(id));
+            acceso = editar;
+        } else if (action.equalsIgnoreCase("eliminar")) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            usuariosDAO.elimiar(id);
+            response.sendRedirect("Controlador?accion=listar");
+            return;
         }
 
         RequestDispatcher vista = request.getRequestDispatcher(acceso);
@@ -59,39 +55,31 @@ public class Controlador extends HttpServlet {
         String action = request.getParameter("accion");
 
         if (action.equalsIgnoreCase("Crear")) {
-            // Capturar datos del formulario
             String nombre = request.getParameter("inputName");
             String edadStr = request.getParameter("inputEdad");
             String celular = request.getParameter("inputCel");
 
-            // Crear objeto usuario
             Usuarios nuevoUsuario = new Usuarios();
             nuevoUsuario.setNombre(nombre);
-
-            try {
-                nuevoUsuario.setEdad(Integer.parseInt(edadStr)); // Convertir edad a número
-            } catch (NumberFormatException e) {
-                nuevoUsuario.setEdad(0); // Valor por defecto si hay error
-                System.out.println("Error: La edad ingresada no es un número válido.");
-            }
-
+            nuevoUsuario.setEdad(Integer.parseInt(edadStr));
             nuevoUsuario.setCelular(celular);
 
-            // Insertar usuario en la base de datos
-            boolean insertado = usuariosDAO.crear(nuevoUsuario);
+            usuariosDAO.crear(nuevoUsuario);
+            response.sendRedirect("Controlador?accion=listar");
+        } else if (action.equalsIgnoreCase("Editar")) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            String nombre = request.getParameter("inputName");
+            int edad = Integer.parseInt(request.getParameter("inputEdad"));
+            String celular = request.getParameter("inputCel");
 
-            if (insertado) {
-                response.sendRedirect("Controlador?accion=listar"); // 🔹 Redirige correctamente
-                return; // 🔹 Termina el método después de redirigir
-            } else {
-                response.getWriter().println("Error al crear usuario.");
-            }
+            Usuarios usuarioEditado = new Usuarios();
+            usuarioEditado.setId(id);
+            usuarioEditado.setNombre(nombre);
+            usuarioEditado.setEdad(edad);
+            usuarioEditado.setCelular(celular);
+
+            usuariosDAO.editar(usuarioEditado);
+            response.sendRedirect("Controlador?accion=listar");
         }
     }
-
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }
-
 }

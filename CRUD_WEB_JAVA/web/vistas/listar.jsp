@@ -3,6 +3,7 @@
 <%@page import="Modelo.Usuarios"%>
 <%@page import="ModeloDAO.UsuariosDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -14,39 +15,33 @@
             <h1>Usuarios</h1>
             <a href="Controlador?accion=crear">Crear nuevo usuario</a>
 
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Nombre</th>
-                        <th>Edad</th>
-                        <th>Celular</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <%
-                        UsuariosDAO dao = new UsuariosDAO();
-                        List<Usuarios> list = dao.listar();
-                        Iterator<Usuarios> iter = list.iterator();
-                        Usuarios us = null;
+            <% if (request.getAttribute("usuarios") != null) {%>
+            <% } else { %>
+            <p>No se encontró la lista de usuarios.</p>
+            <% }%>
 
-                        while (iter.hasNext()) {
-                            us = iter.next();
-                    %>
+            <table border="1">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Edad</th>
+                    <th>Celular</th>
+                    <th>Acciones</th>
+                </tr>
+                <c:forEach var="usuario" items="${usuarios}">
                     <tr>
-                        <td><%= us.getId()%></td>
-                        <td><%= us.getNombre()%></td>
-                        <td><%= us.getEdad()%></td>
-                        <td><%= us.getCelular()%></td>
+                        <td>${usuario.id}</td>
+                        <td>${usuario.nombre}</td>
+                        <td>${usuario.edad}</td>
+                        <td>${usuario.celular}</td>
                         <td>
-                            <a href="Controlador?accion=editar&id=<%= us.getId()%>">️Editar</a> | 
-                            <a href="Controlador?accion=eliminar&id=<%= us.getId()%>" style="color: red;">Quitar</a>
+                            <a href="Controlador?accion=editar&id=${usuario.id}">Editar</a> |
+                            <a href="Controlador?accion=eliminar&id=${usuario.id}" onclick="return confirm('¿Seguro que deseas eliminar?');">Eliminar</a>
                         </td>
                     </tr>
-                    <% }%>
-                </tbody>
+                </c:forEach>
             </table>
+
         </div>
     </body>
 </html>
