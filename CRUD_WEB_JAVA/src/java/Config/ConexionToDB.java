@@ -1,6 +1,5 @@
 package Config;
 
-// importación de las clases necesarias para la conexión con la base de datos y manejo de excepciones
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Logger;
@@ -12,7 +11,6 @@ public class ConexionToDB {
     // variable para almacenar la conexión con la base de datos
     Connection con;
 
-    // datos para la conexión con la base de datos
     private static final String db = "db_crud_java_web";
     private static final String url = "jdbc:mysql://localhost:3306/"
             + db
@@ -31,7 +29,7 @@ public class ConexionToDB {
             System.out.println("No se pudo conectar a la base de datos " + db);
             Logger.getLogger(ConexionToDB.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return con; // Retorna la conexión
+        return con;
     }
 
     // método principal para probar la conexión

@@ -1,4 +1,3 @@
-// Controlador.java - Actualización para editar y eliminar usuarios
 package Controlador;
 
 import Modelo.Usuarios;

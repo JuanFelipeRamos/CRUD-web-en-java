@@ -1,4 +1,3 @@
-// UsuariosDAO.java - Implementación de editar y eliminar
 package ModeloDAO;
 
 import Config.ConexionToDB;
